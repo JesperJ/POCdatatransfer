@@ -1,0 +1,32 @@
+# Traefik reverse proxy
+# Creates the shared Docker network and starts Traefik.
+# All service repos connect to the 'traefik-public' network.
+#
+# Usage:
+#   cp .env.example .env  # fill in ACME_EMAIL
+#   docker compose up -d
+
+services:
+  traefik:
+    image: traefik:v3.0
+    container_name: traefik
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./dynamic:/etc/traefik/dynamic:ro
+      - traefik-certs:/letsencrypt
+    networks:
+      - traefik-public
+    env_file:
+      - .env
+
+networks:
+  traefik-public:
+    name: traefik-public
+
+volumes:
+  traefik-certs:

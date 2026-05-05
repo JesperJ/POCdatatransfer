@@ -1,0 +1,40 @@
+# Private Docker Registry — sits behind Traefik with TLS + htpasswd auth.
+#
+# First-time setup on the server:
+#   1. cd infra/registry
+#   2. cp .env.example .env && fill in values
+#   3. bash setup-htpasswd.sh   # creates /etc/datatransfer/registry/htpasswd
+#   4. docker compose up -d
+#
+# Push an image:
+#   docker login registry.company.com
+#   docker push registry.company.com/datatransfer-api:1.0.0
+
+services:
+  registry:
+    image: registry:2
+    container_name: registry
+    restart: always
+    volumes:
+      - registry-data:/var/lib/registry
+      - /etc/datatransfer/registry/htpasswd:/auth/htpasswd:ro
+    environment:
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: Registry
+      REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+      REGISTRY_STORAGE_DELETE_ENABLED: "true"
+    networks:
+      - traefik-public
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.registry.rule=Host(`${REGISTRY_DOMAIN}`)"
+      - "traefik.http.routers.registry.entrypoints=websecure"
+      - "traefik.http.routers.registry.tls.certresolver=letsencrypt"
+      - "traefik.http.services.registry.loadbalancer.server.port=5000"
+
+networks:
+  traefik-public:
+    external: true
+
+volumes:
+  registry-data:

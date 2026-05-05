@@ -1,0 +1,25 @@
+# Production overrides — Traefik routing, resource limits, restart always.
+# Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+# Env file expected on host at: /etc/datatransfer/.env.prod
+
+services:
+  api:
+    env_file:
+      - /etc/datatransfer/.env.prod
+    volumes:
+      - /etc/datatransfer:/config:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.datatransfer.rule=Host(`datatransfer.poc.internal`)"
+      - "traefik.http.routers.datatransfer.entrypoints=websecure"
+      - "traefik.http.routers.datatransfer.tls.certresolver=letsencrypt"
+      - "traefik.http.services.datatransfer.loadbalancer.server.port=8080"
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 128M
+    restart: always

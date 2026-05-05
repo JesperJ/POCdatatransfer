@@ -1,0 +1,28 @@
+# Azure DevOps self-hosted agent
+# Deploy one instance of this per server (staging server, prod server).
+# The agent connects OUTBOUND to Azure DevOps — no inbound access needed.
+#
+# First-time setup:
+#   1. cd infra/runner
+#   2. cp .env.example .env && fill in AZP_URL, AZP_TOKEN, AZP_POOL, AZP_AGENT_NAME
+#   3. docker compose up -d
+#
+# The agent registers itself in Azure DevOps on first start and re-registers
+# automatically if the container is recreated (token is stored in the volume).
+
+services:
+  runner:
+    image: mcr.microsoft.com/azure-pipelines/vsts-agent:ubuntu-22.04
+    container_name: azdo-runner
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      # Docker socket so the agent can run docker build/push/compose
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Persist agent registration across container restarts
+      - runner-data:/agent/_work
+    # No networks entry needed — agent only makes outbound connections
+
+volumes:
+  runner-data:

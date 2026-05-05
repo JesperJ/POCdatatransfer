@@ -1,0 +1,20 @@
+# Dev overrides — exposes ports locally, disables Traefik, enables dev settings.
+# Usage: docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+services:
+  api:
+    env_file:
+      - .env.dev
+    environment:
+      - ASPNETCORE_URLS=http://+:8080
+    ports:
+      - "5000:8080"
+    restart: "no"
+    networks:
+      - default
+
+networks:
+  # Override traefik-public to a local bridge so external: true is not needed.
+  traefik-public:
+    external: false
+    name: datatransfer-dev
