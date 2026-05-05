@@ -7,7 +7,7 @@ services:
     env_file:
       - .env.staging
     volumes:
-      - /etc/datatransfer:/config:ro
+      - /home/jesper/.POCdatatransfers:/config:ro
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.datatransfer-staging.rule=Host(`staging.datatransfer.poc.internal`)"
