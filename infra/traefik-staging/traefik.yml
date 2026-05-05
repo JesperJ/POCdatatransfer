@@ -1,0 +1,29 @@
+# Traefik static configuration — staging
+# Docs: https://doc.traefik.io/traefik/
+
+api:
+  dashboard: false
+
+entryPoints:
+  web:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+  websecure:
+    address: ":443"
+    transport:
+      lifeCycle:
+        graceTimeOut: 10s
+
+providers:
+  docker:
+    exposedByDefault: false
+    network: traefik-staging
+  file:
+    directory: /etc/traefik/dynamic
+    watch: true
+
+# No certificatesResolvers — uses self-signed cert.

@@ -1,0 +1,31 @@
+# Staging Traefik — listens on ports 8080/8443, owns the traefik-staging network.
+# All services that target staging connect to this network.
+#
+# Usage:
+#   cp .env.example .env
+#   docker compose up -d
+
+services:
+  traefik:
+    image: traefik:v3
+    container_name: traefik-staging
+    restart: always
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./dynamic:/etc/traefik/dynamic:ro
+      - traefik-staging-certs:/letsencrypt
+    networks:
+      - traefik-staging
+    env_file:
+      - .env
+
+networks:
+  traefik-staging:
+    name: traefik-staging
+
+volumes:
+  traefik-staging-certs:

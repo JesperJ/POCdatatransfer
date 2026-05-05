@@ -1,6 +1,7 @@
 # Production overrides — Traefik routing, resource limits, restart always.
 # Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 # Env file expected on host at: /etc/datatransfer/.env.prod
+# Requires traefik-prod network (start infra/traefik-prod first).
 
 services:
   api:
@@ -23,3 +24,10 @@ services:
           cpus: "0.25"
           memory: 128M
     restart: always
+    networks:
+      - traefik-public
+
+networks:
+  traefik-public:
+    external: true
+    name: traefik-prod
