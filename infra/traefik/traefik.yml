@@ -2,7 +2,7 @@
 # Docs: https://doc.traefik.io/traefik/
 
 api:
-  dashboard: false   # set to true + add auth middleware to enable dashboard
+  dashboard: false
 
 entryPoints:
   web:
@@ -26,10 +26,4 @@ providers:
     directory: /etc/traefik/dynamic
     watch: true              # hot-reload dynamic config without restarting Traefik
 
-certificatesResolvers:
-  letsencrypt:
-    acme:
-      email: ${ACME_EMAIL}
-      storage: /letsencrypt/acme.json
-      httpChallenge:
-        entryPoint: web
+# No certificatesResolvers — Traefik uses its built-in self-signed cert

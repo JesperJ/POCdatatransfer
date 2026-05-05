@@ -14,12 +14,12 @@ FROM build AS publish
 RUN dotnet publish "DataTransfer.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # ── Stage 3: runtime ─────────────────────────────────────────────────────────
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS final
 WORKDIR /app
 
 COPY --from=publish /app/publish .
 
-# aspnet:10.0 (Ubuntu Chiseled) ships with a built-in non-root user
+# aspnet images ship with a built-in non-root user (UID 1654)
 USER $APP_UID
 
 EXPOSE 8080

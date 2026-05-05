@@ -6,7 +6,7 @@ Single .NET 10 Web API (`src/DataTransfer.Api/`) deployed as a Docker container 
 
 Key files:
 - [src/DataTransfer.Api/Program.cs](../src/DataTransfer.Api/Program.cs) — app bootstrap, includes `/health` endpoint
-- [Dockerfile](../Dockerfile) — multi-stage build (sdk:10.0 → aspnet:10.0), runs as non-root `appuser`
+- [Dockerfile](../Dockerfile) — multi-stage build (sdk:10.0 → aspnet:10.0-alpine), runs as built-in non-root `$APP_UID`
 - [docker-compose.yml](../docker-compose.yml) — base config, always combined with an env override
 - `infra/` — present for local convenience only; lives in its own repo in production
 
@@ -51,6 +51,8 @@ Key variables: `ASPNETCORE_ENVIRONMENT`, `TAG`, `DATABASE_CONNECTION_STRING`.
 
 ## Conventions
 
+- **Runtime image**: `aspnet:10.0-alpine` — use `$APP_UID` for the non-root user, never `adduser` (no shell utilities available). Healthcheck uses `wget`, not `curl`.
+- **Traefik**: `traefik:v3` (not `v3.0` — older patch versions use Docker API 1.24 which is rejected by newer Docker daemons). Staging/prod use `tls=true` with Traefik's built-in self-signed cert locally; swap in a `certresolver` for production with a public domain.
 - **Nullable reference types** and **implicit usings** are enabled — do not use `#nullable disable` or redundant `using` directives.
 - **Health check**: `GET /health` is mapped in `Program.cs` and used by Docker's healthcheck. Keep it available.
 - **Traefik network**: dev compose overrides `traefik-public` to a local bridge; staging/prod require the external `traefik-public` network to exist on the host.

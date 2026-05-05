@@ -12,7 +12,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.datatransfer.rule=Host(`datatransfer.poc.internal`)"
       - "traefik.http.routers.datatransfer.entrypoints=websecure"
-      - "traefik.http.routers.datatransfer.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.datatransfer.tls=true"
       - "traefik.http.services.datatransfer.loadbalancer.server.port=8080"
     deploy:
       resources:

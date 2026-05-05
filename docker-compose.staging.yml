@@ -12,5 +12,5 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.datatransfer-staging.rule=Host(`staging.datatransfer.poc.internal`)"
       - "traefik.http.routers.datatransfer-staging.entrypoints=websecure"
-      - "traefik.http.routers.datatransfer-staging.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.datatransfer-staging.tls=true"
       - "traefik.http.services.datatransfer-staging.loadbalancer.server.port=8080"
