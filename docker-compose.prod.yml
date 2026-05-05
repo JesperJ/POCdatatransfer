@@ -5,7 +5,7 @@
 services:
   api:
     env_file:
-      - /etc/datatransfer/.env.prod
+      - .env.prod
     volumes:
       - /etc/datatransfer:/config:ro
     labels:

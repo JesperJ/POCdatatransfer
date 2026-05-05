@@ -5,7 +5,7 @@
 services:
   api:
     env_file:
-      - /etc/datatransfer/.env.staging
+      - .env.staging
     volumes:
       - /etc/datatransfer:/config:ro
     labels:

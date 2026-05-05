@@ -17,10 +17,10 @@ RUN dotnet publish "DataTransfer.Api.csproj" -c Release -o /app/publish /p:UseAp
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 
-# Non-root user for security
-RUN adduser --disabled-password --gecos "" appuser && chown -R appuser /app
-USER appuser
+COPY --from=publish /app/publish .
+
+# aspnet:10.0 (Ubuntu Chiseled) ships with a built-in non-root user
+USER $APP_UID
 
 EXPOSE 8080
-COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "DataTransfer.Api.dll"]

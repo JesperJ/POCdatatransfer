@@ -12,7 +12,7 @@ if [[ -z "$ENV" ]]; then
   exit 1
 fi
 
-CONFIG_DIR="/etc/datatransfer"
+CONFIG_DIR="/home/jesper/POCdatatransfers"
 ENV_FILE="$CONFIG_DIR/.env.$ENV"
 TEMPLATE=".env.$ENV.example"
 
