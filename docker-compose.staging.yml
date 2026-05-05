@@ -1,6 +1,8 @@
 # Staging overrides — Traefik routing to staging domain, single replica.
 # Usage: docker compose -f docker-compose.yml -f docker-compose.staging.yml up -d
 # Env file expected on host at: /etc/datatransfer/.env.staging
+# Requires traefik-staging network (start infra/traefik-staging first).
+# Staging Traefik listens on host ports 8080 (http) and 8443 (https).
 
 services:
   api:
@@ -14,3 +16,10 @@ services:
       - "traefik.http.routers.datatransfer-staging.entrypoints=websecure"
       - "traefik.http.routers.datatransfer-staging.tls=true"
       - "traefik.http.services.datatransfer-staging.loadbalancer.server.port=8080"
+    networks:
+      - traefik-public
+
+networks:
+  traefik-public:
+    external: true
+    name: traefik-staging

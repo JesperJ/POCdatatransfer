@@ -1,0 +1,31 @@
+# Traefik static configuration — production
+# Docs: https://doc.traefik.io/traefik/
+
+api:
+  dashboard: false
+
+entryPoints:
+  web:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+  websecure:
+    address: ":443"
+    transport:
+      lifeCycle:
+        graceTimeOut: 10s
+
+providers:
+  docker:
+    exposedByDefault: false
+    network: traefik-prod
+  file:
+    directory: /etc/traefik/dynamic
+    watch: true
+
+# No certificatesResolvers — Traefik uses its built-in self-signed cert.
+# To enable Let's Encrypt, add a certificatesResolvers block and reference
+# ACME_EMAIL from the .env file.

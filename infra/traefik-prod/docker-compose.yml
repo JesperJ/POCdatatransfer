@@ -1,0 +1,31 @@
+# Production Traefik — listens on ports 80/443, owns the traefik-prod network.
+# All services that target production connect to this network.
+#
+# Usage:
+#   cp .env.example .env  # fill in ACME_EMAIL if using Let's Encrypt
+#   docker compose up -d
+
+services:
+  traefik:
+    image: traefik:v3
+    container_name: traefik-prod
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./dynamic:/etc/traefik/dynamic:ro
+      - traefik-prod-certs:/letsencrypt
+    networks:
+      - traefik-prod
+    env_file:
+      - .env
+
+networks:
+  traefik-prod:
+    name: traefik-prod
+
+volumes:
+  traefik-prod-certs:
